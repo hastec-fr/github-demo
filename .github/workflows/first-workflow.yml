@@ -15,11 +15,11 @@ jobs:
         run: |
           hostname
           pwd
-          ls -a /
+          ls -l /
       - name: Create a file
         run: |
           ls -al
-          echo "One line" > myFile.log
+          echo "One line" | tee -f myFile.log
           ls -al
       - name: A final step
         run: ls -al
@@ -31,5 +31,5 @@ jobs:
         run: |
           hostname
           pwd
-          ls -a
+          ls -al
   
