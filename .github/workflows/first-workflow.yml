@@ -19,7 +19,7 @@ jobs:
       - name: Create a file
         run: |
           ls -al
-          echo "One line" | tee -f myFile.log
+          echo "One line" | tee myFile.log
           ls -al
       - name: A final step
         run: ls -al
