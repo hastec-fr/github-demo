@@ -11,6 +11,6 @@ jobs:
       - name: Lint code
         run: npm run lint
       - name: Run the server
-        run: npm start & npx wait http://127.0.0.1:5173
+        run: npm run dev < /dev/null & npx wait-on "http://localhost:5173" --timeout 10s
       - name: Cypress Tests
         run: npx cypress run
