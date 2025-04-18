@@ -10,4 +10,25 @@ jobs:
           echo "Another Line"
       - name: Print a second step
         shell: python
-        run: print("Woaw a python line")
+        run: print("Woaw a python line")      
+      - name: Get Info
+        run: |
+          hostname
+          pwd
+          ls -a /
+      - name: Create a file
+        run: |
+          ls -al
+          echo "One line" > myFile.log
+          ls -al
+      - name: A final step
+        run: ls -al
+
+  second-job:
+    steps:
+      - name: check file there
+        run: |
+          hostname
+          pwd
+          ls -a
+  
