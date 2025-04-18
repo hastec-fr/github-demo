@@ -1,0 +1,14 @@
+name: Second Workflow
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: List content
+        run: ls -al
+      - name: Get dependencies
+        run: npm ci
+      - name: Lint code
+        run: npm run lint
