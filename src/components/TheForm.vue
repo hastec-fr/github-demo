@@ -75,27 +75,26 @@
   let f09_password = ref("");
   let form = ref();
 
-
   let f01_text_rules = [
-    v => !!v                  || 'The first name should not be empty',
-    v => (v && v.length >= 3) || 'The first name must be 3 characters or more',
-    v => (v === 'John')       || 'The first name should be equal to John.'
+    (v:string) => !!v                  || 'The first name should not be empty',
+    (v:string) => (v && v.length >= 3) || 'The first name must be 3 characters or more',
+    (v:string) => (v === 'John')       || 'The first name should be equal to John.'
   ];
 
   let f02_text_rules = [
-    v => (v === 'Snow')       || 'The last name should be equal to Snow.'
+    (v:string) => (v === 'Snow')       || 'The last name should be equal to Snow.'
   ];
 
   let f03_area_rules = [
-    v => (v === 'En haut du mur\nÀ la garde de nuit\n2019 Winterfell')       || `1st line: En haut du mur, 2nd: À la garde de nuit, 3rd: 2019 Winterfell`
+    (v:string) => (v === 'En haut du mur\nÀ la garde de nuit\n2019 Winterfell')       || `1st line: En haut du mur, 2nd: À la garde de nuit, 3rd: 2019 Winterfell`
   ];
 
   let f06_number_rule = [
-    v => (v === 21)       || `The age should be 21`
+    (v:number) => (v === 21)       || `The age should be 21`
   ];
 
   let f07_checkboxes_rule = [
-    v => {
+  (v:string[]) => {
       let allGood = true;
       if (v?.length === 2) {
         v.forEach((choice:string) => { if (!choice.startsWith('good')) allGood = false });
@@ -105,11 +104,11 @@
   ];
 
   let f08_email_rule = [
-    v => (v === 'john.snow@winterfell.com')       || `The email should be john.snow@winterfell.com`
+    (v:string) => (v === 'john.snow@winterfell.com')       || `The email should be john.snow@winterfell.com`
   ];
 
   let f09_email_rule = [
-    v => (v === 'Live Free Or Die')       || `The password should be 'Live Free Or Die'`
+    (v:string) => (v === 'Live Free Or Die')       || `The password should be 'Live Free Or Die'`
   ]
 
   async function validate() {

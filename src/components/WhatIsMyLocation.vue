@@ -33,17 +33,21 @@
 
   const getRandomPosition = () => {
     myLocation.value = {
+         // @ts-expect-error: New method over globalThis
         latitude: window.getRandomLatitude(),
+         // @ts-expect-error: New method over globalThis
         longitude: window.getRandomLongitude()
     };
     return myLocation.value;
   }
 
-  // Expose the funct²ion for testing (to not do in practice)
+  // Expose the function for testing (to not do in practice)
   onMounted(() => {
+    // @ts-expect-error: New method over globalThis
     window.getRandomLatitude = () => {
       return Math.trunc((Math.random() * 180 - 90) * 10000)/10000;
     }
+     // @ts-expect-error: New method over globalThis
     window.getRandomLongitude = () => {
       return Math.trunc((Math.random() * 360 - 180) * 10000)/10000;
     } 

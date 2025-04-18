@@ -1,5 +1,6 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css';
+ // @ts-expect-error: vuetify/styles come from documentation.
 import 'vuetify/styles';
 
 // Vuetify
