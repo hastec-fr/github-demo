@@ -14,3 +14,17 @@ jobs:
         run: npm run dev < /dev/null & npx wait-on "http://localhost:5173" --timeout 10s
       - name: Cypress Tests
         run: npx cypress run
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Get dependencies
+        run: npm ci
+      - name: Build the app
+        run: npm run build
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pseudo Deployment
+        run: echo "Deploying App"
