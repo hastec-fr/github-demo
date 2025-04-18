@@ -10,19 +10,7 @@ jobs:
         run: npm ci
       - name: Lint code
         run: npm run lint
-      - name: List content
-        run: ls -al
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Get dependencies
-        run: npm ci
-      - name: Build the app
-        run: npm run build
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pseudo Deployment
-        run: echo "Deploying App"
+      - name: Run the server
+        run: npm start & npx wait http://127.0.0.1:5173
+      - name: Cypress Tests
+        run: npx cypress run
