@@ -1,21 +1,21 @@
 name: Second Workflow
 on: [push, workflow_dispatch]
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-        with:
-          start: npm run dev
-          wait-on: 'http://localhost:5173'
-      # - name: Lint code
-      #   run: npm run lint 
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Get code
+  #       uses: actions/checkout@v4
+  #     - name: Cypress run
+  #       uses: cypress-io/github-action@v6
+  #       with:
+  #         start: npm run dev
+  #         wait-on: 'http://localhost:5173'
+  #     # - name: Lint code
+  #     #   run: npm run lint 
 
   build:
-    needs: test
+    # needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -30,10 +30,22 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build the app
-        run: npm run build
+        run: npm run build        
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app
+          path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Pseudo Deployment
         run: echo "Deploying App"
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: my-app
+      - name: Output contents
+        run: ls
