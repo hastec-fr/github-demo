@@ -8,21 +8,36 @@ on:
         type: 'boolean'
         default: false
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v4
-  #     - name: Cypress run
-  #       uses: cypress-io/github-action@v6
-  #       with:
-  #         start: npm run dev
-  #         wait-on: 'http://localhost:5173'
-  #     # - name: Lint code
-  #     #   run: npm run lint 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
+      - name: Get dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build the app
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
 
   build:
-    # needs: test
+    needs: [lint, test]
     runs-on: ubuntu-latest
     outputs:
       bom: ${{ steps.publish-bom.outputs.bom_list }}
