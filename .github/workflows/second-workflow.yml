@@ -10,7 +10,9 @@ jobs:
         id: cache
         uses: actions/cache@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
+            /home/runner/.cache/Cypress
           key: npm-dep-${{ hashFiles('**/package-lock.json') }}
       - name: Get dependencies
         if: steps.cache.outputs.cache-hit != 'true'
