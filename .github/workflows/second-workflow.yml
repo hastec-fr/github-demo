@@ -1,8 +1,6 @@
 name: Second Workflow
 on: [push, workflow_dispatch]
 jobs:
-  lint:
-    runs-on: ubuntu-latest
   test:
     runs-on: ubuntu-latest
     steps:
