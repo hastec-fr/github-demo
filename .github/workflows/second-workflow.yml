@@ -31,7 +31,7 @@ jobs:
           path: ~/.npm
           key: npm-dep-${{ hashFiles('**/package-lock.json') }}
       - name: Get dependencies
-        run: npm ci
+        run: npm install
       - name: Build the app
         run: npm run build
   deploy:
