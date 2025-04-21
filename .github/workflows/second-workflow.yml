@@ -1,5 +1,12 @@
 name: Second Workflow
-on: [push, workflow_dispatch]
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      display-bom:
+        required: false
+        type: 'boolean'
+        default: false
 jobs:
   # test:
   #   runs-on: ubuntu-latest
@@ -56,6 +63,7 @@ jobs:
         with:
           name: my-app
       - name: Display BOM
+        if: github.event.inputs.display-bom
         run: echo "${{ needs.build.outputs.bom }}"
       - name: Output artifacts
         run: ls
