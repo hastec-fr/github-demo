@@ -37,7 +37,7 @@ jobs:
           wait-on: 'http://localhost:5173'
 
   build:
-    needs: [lint, test]
+    needs: test
     runs-on: ubuntu-latest
     outputs:
       bom: ${{ steps.publish-bom.outputs.bom_list }}
@@ -68,7 +68,7 @@ jobs:
           path: dist
 
   deploy:
-    needs: build
+    needs: [build, lint]
     runs-on: ubuntu-latest
     steps:
       - name: Pseudo Deployment
