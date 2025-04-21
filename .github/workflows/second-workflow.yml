@@ -35,7 +35,10 @@ jobs:
         run: npm run build
       - name: Detail content
         id: publish-bom
-        run: echo bom_list=\"$(find dist -name '*.js' -exec echo '{}' \;)\" >> $GITHUB_OUTPUT
+        run: |
+          echo 'bom_list<<EOF' >> $GITHUB_OUTPUT
+          find dist -name '*.js' -exec echo '{}' \; >> $GITHUB_OUTPUT
+          echo EOF >> $GITHUB_OUTPUT
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -53,8 +56,6 @@ jobs:
         with:
           name: my-app
       - name: Display BOM
-        run: |
-          echo "BOM:"
-          echo "${{ needs.build.outputs.bom }}"
+        run: echo "${{ needs.build.outputs.bom }}"
       - name: Output artifacts
         run: ls
