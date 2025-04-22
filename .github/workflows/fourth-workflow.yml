@@ -32,7 +32,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: node:23
+      image: cypress/included:14.3.1
     steps:
       - name: Get code
         uses: actions/checkout@v4
