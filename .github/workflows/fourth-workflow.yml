@@ -32,18 +32,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: node:23
+      image: cypress/included:14.3.1
     steps:
-      - name: Install dependencies
-        run: apt update && apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - name: Get code
         uses: actions/checkout@v4
+      - run: npm run dev < /dev/null & npx wait-on "http://localhost:5173" --timeout 10s
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
-        with:
-          start: npm run dev
-          wait-on: 'http://localhost:5173'
+      #   with:
+      #     start: npm run dev
+      #     wait-on: 'http://localhost:5173'
       - name: Get evidence
         uses: actions/upload-artifact@v4        
         if: steps.cypress-test.outcome == 'failure'
