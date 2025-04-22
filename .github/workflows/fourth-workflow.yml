@@ -42,7 +42,7 @@ jobs:
         with:
           path: node_modules
           key: npm-dep-${{ hashFiles('**/package-lock.json') }}
-      - run: npm run dev < /dev/null & npx wait-on "http://localhost:5173" --timeout 10s
+      - run: npm run dev < /dev/null & npx wait-on "http://127.0.0.1:5173" --timeout 10s
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
