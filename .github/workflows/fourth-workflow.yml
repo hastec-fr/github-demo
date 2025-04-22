@@ -44,13 +44,13 @@ jobs:
         with:
           path: node_modules
           key: npm-dep-${{ hashFiles('**/package-lock.json') }}
-      - run: npm run dev < /dev/null & npx wait-on "http://127.0.0.1:5173" --timeout 10s
+      - run: npm run dev < /dev/null &
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
-      #   with:
+        with:
+          wait-on: 'http://localhost:5173'
       #     start: npm run dev
-      #     wait-on: 'http://localhost:5173'
       - name: Get evidence
         uses: actions/upload-artifact@v4        
         if: steps.cypress-test.outcome == 'failure'
