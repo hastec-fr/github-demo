@@ -33,6 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: cypress/included:14.3.1
+      ports:
+        - 5173:5173
     steps:
       - name: Get code
         uses: actions/checkout@v4
