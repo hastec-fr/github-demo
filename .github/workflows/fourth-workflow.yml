@@ -1,5 +1,11 @@
 name: Fourth Workflow
 on:
+  pull_request:
+    branches-ignore:
+      - test
+    types:
+      - opened
+    
   push:
     branches:
       - master
