@@ -2,7 +2,7 @@ name: Fourth Workflow
 on:
   push:
     branches:
-      - main
+      - master
       - 'releases/**'
       
   workflow_dispatch:
