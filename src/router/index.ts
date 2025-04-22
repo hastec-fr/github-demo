@@ -38,6 +38,11 @@ function setupRouter(): Router {
 			component: TheForm,
 		},
 		{
+			path: '/periodic',
+			name: 'periodic',
+			component: () => import('../components/PeriodicElementTable.vue')
+		},
+		{
 			path: '/:pathMatch(.*)*',
 			redirect: { name: 'home' },
 		},

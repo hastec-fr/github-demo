@@ -9,6 +9,15 @@ export default defineConfig({
 		vue(), 
 		vuetify({ autoImport: true })
 	],
+	server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000", // URL de votre backend
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
   resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
