@@ -78,6 +78,14 @@ jobs:
   deploy:
     needs: [build, lint]
     uses: ./.github/workflows/deploy.yml
-    # with:
-    #   artifact-name: my-app
+    with:
+      artifact-name: my-app
+    # secrets:
+    #   my-secret: ${{ secrets.GITHUB_TOKEN }}
 
+  post-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print deploy output
+        run: echo "${{ needs.deploy.outputs.result }}"
