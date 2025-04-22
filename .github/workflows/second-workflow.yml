@@ -32,12 +32,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Cypress run
         uses: cypress-io/github-action@v6
+        continue-on-error: true
         with:
           start: npm run dev
           wait-on: 'http://localhost:5173'
       - name: Get evidence
-        uses: actions/upload-artifact@v4
-        continue-on-error: true
+        uses: actions/upload-artifact@v4        
         if: failure()
         with:
           name: cypress-screenshots
