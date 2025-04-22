@@ -1,0 +1,17 @@
+name: Checkout and Cache
+on: workflow_call
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pseudo Deployment
+        run: echo "Deploying App"
+      # - name: Get artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: my-app
+      # - name: Display BOM
+      #   if: github.event.inputs.display-bom
+      #   run: echo "${{ needs.build.outputs.bom }}"
+      # - name: Output artifacts
+      #   run: ls
