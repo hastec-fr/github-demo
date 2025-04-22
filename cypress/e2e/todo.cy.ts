@@ -1,6 +1,6 @@
 describe('Todo List Page', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:5173/todo');
+    cy.visit('http://host.docker.internal:5173/todo');
   });
 
   it('should add a task', () => {
