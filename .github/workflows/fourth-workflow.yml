@@ -72,7 +72,7 @@ jobs:
           - 3000:3000
         env:
           PGRST_JWT_SECRET: ${{ secrets.PGRST_JWT_SECRET }}
-          PGRST_DB_URI: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@127.0.0.1/gh_db
+          PGRST_DB_URI: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@host.docker.internal/gh_db
 
   build:
     needs: test
