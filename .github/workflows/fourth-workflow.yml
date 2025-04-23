@@ -33,28 +33,26 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    # services:
-    #   db:
-    #     image: postgres:17.4-alpine3.21
-    #     ports:
-    #       - 5432:5432
-    #     env:
-    #       POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-    #       POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-    #       POSTGRES_DB: gh_db
-    #     volumes:
-    #       - ${{ github.workspace }}/indus/data/:/docker-entrypoint-initdb.d
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
+    services:
+      db:
+        image: postgres:17.4-alpine3.21
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: 
+          POSTGRES_DB: gh_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Test Postgres version
-        run: psql --version
+      - name: Seed the database
+        run: PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost -U ${{ secrets.DB_USERNAME }} -d gh_db -f ${{ github.workspace }}/indus/data
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
