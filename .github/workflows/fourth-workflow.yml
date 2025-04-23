@@ -14,6 +14,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    container:
+      image: node:23-alpine3.21
     steps:
       - name: Get code
         uses: actions/checkout@v4
@@ -31,26 +33,15 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included:14.3.1
-      ports:
-        - 5173:5173
     steps:
       - name: Get code
-        uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
-      - run: npm run dev < /dev/null &
+        uses: actions/checkout@v4      
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
         with:
-          wait-on: 'http://test:5173'
-      #     start: npm run dev
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
       - name: Get evidence
         uses: actions/upload-artifact@v4        
         if: steps.cypress-test.outcome == 'failure'
