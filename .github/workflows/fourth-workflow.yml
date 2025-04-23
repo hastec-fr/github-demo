@@ -17,111 +17,111 @@ env:
     IMAGE_NAME: github-demo
 
 jobs:
-  # lint:
-  #   runs-on: ubuntu-latest
-  #   # container:
-  #   #   image: node:23
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v4
-  #     - name: Cache dependencies
-  #       id: cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: node_modules
-  #         key: npm-dep-${{ hashFiles('**/package-lock.json') }}
-  #     - name: Get dependencies
-  #       if: steps.cache.outputs.cache-hit != 'true'
-  #       run: npm ci
-  #     - name: Build the app
-  #       run: npm run lint
+  lint:
+    runs-on: ubuntu-latest
+    # container:
+    #   image: node:23
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
+      - name: Get dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build the app
+        run: npm run lint
 
-  # test:
-  #   runs-on: ubuntu-latest
-  #   environment:  dev
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v4
+  test:
+    runs-on: ubuntu-latest
+    environment:  dev
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
 
-  #     - name: Seed the database
-  #       run: >
-  #         PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost
-  #         -U ${{ secrets.DB_USERNAME }}
-  #         -d gh_db 
-  #         -f ${{ github.workspace }}/indus/data/init_db.sql
+      - name: Seed the database
+        run: >
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost
+          -U ${{ secrets.DB_USERNAME }}
+          -d gh_db 
+          -f ${{ github.workspace }}/indus/data/init_db.sql
 
-  #     - name: Start Postgres REST
-  #       run: >
-  #         docker run -d --rm --net=host 
-  #         -e PGRST_JWT_SECRET="${{ secrets.PGRST_JWT_SECRET }}"
-  #         -e PGRST_DB_URI="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@localhost/gh_db"
-  #         postgrest/postgrest
+      - name: Start Postgres REST
+        run: >
+          docker run -d --rm --net=host 
+          -e PGRST_JWT_SECRET="${{ secrets.PGRST_JWT_SECRET }}"
+          -e PGRST_DB_URI="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@localhost/gh_db"
+          postgrest/postgrest
 
-  #     - name: Cypress run
-  #       id: cypress-test
-  #       uses: cypress-io/github-action@v6
-  #       with:
-  #         start: npm run dev
-  #         wait-on: 'http://localhost:5173'
-  #       env:          
-  #         VITE_BACKEND_TOKEN: ${{ secrets.VITE_BACKEND_TOKEN }}
+      - name: Cypress run
+        id: cypress-test
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
+        env:          
+          VITE_BACKEND_TOKEN: ${{ secrets.VITE_BACKEND_TOKEN }}
           
-  #     - name: Get evidence
-  #       uses: actions/upload-artifact@v4
-  #       if: steps.cypress-test.outcome == 'failure'
-  #       with:
-  #         name: cypress-screenshots
-  #         path: cypress/screenshots
-  #         if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+      - name: Get evidence
+        uses: actions/upload-artifact@v4
+        if: steps.cypress-test.outcome == 'failure'
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
 
-  #   services:
-  #     db:
-  #       image: postgres:17.4-alpine3.21
-  #       ports:
-  #         - 5432:5432
-  #       env:
-  #         POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-  #         POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }} 
-  #         POSTGRES_DB: gh_db
-  #       options: >-
-  #         --health-cmd pg_isready
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
+    services:
+      db:
+        image: postgres:17.4-alpine3.21
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }} 
+          POSTGRES_DB: gh_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-  # build:
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     bom: ${{ steps.publish-bom.outputs.bom_list }}
-  #   steps:
-  #     - name: Get code
-  #       uses: actions/checkout@v4
-  #     - name: Cache dependencies
-  #       id: cache
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: node_modules
-  #         key: npm-dep-${{ hashFiles('**/package-lock.json') }}
-  #     - name: Get dependencies
-  #       if: steps.cache.outputs.cache-hit != 'true'
-  #       run: npm ci
-  #     - name: Build the app
-  #       run: npm run build
-  #     - name: Detail content
-  #       id: publish-bom
-  #       run: |
-  #         echo 'bom_list<<EOF' >> $GITHUB_OUTPUT
-  #         find dist -name '*.js' -exec echo '{}' \; >> $GITHUB_OUTPUT
-  #         echo EOF >> $GITHUB_OUTPUT
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: my-app
-  #         path: dist
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      bom: ${{ steps.publish-bom.outputs.bom_list }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
+      - name: Get dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build the app
+        run: npm run build
+      - name: Detail content
+        id: publish-bom
+        run: |
+          echo 'bom_list<<EOF' >> $GITHUB_OUTPUT
+          find dist -name '*.js' -exec echo '{}' \; >> $GITHUB_OUTPUT
+          echo EOF >> $GITHUB_OUTPUT
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app
+          path: dist
   
   publish-container:
-    # needs: [build, lint]
+    needs: [build, lint]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -144,19 +144,17 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
-  # deploy:
-  #   needs: [build, lint]
-  #   uses: ./.github/workflows/deploy.yml
-  #   with:
-  #     artifact-name: my-app
+  deploy:
+    needs: [build, lint]
+    uses: ./.github/workflows/deploy.yml
+    with:
+      artifact-name: my-app
+    # secrets:
+    #   my-secret: ${{ secrets.GITHUB_TOKEN }}
 
-
-  #   # secrets:
-  #   #   my-secret: ${{ secrets.GITHUB_TOKEN }}
-
-  # post-deploy:
-  #   needs: deploy
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Print deploy output
-  #       run: echo "${{ needs.deploy.outputs.result }}"
+  post-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print deploy output
+        run: echo "${{ needs.deploy.outputs.result }}"
