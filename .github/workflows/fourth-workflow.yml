@@ -33,11 +33,9 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included:14.3.1
     steps:
       - name: Get code
-        uses: actions/checkout@v4      
+        uses: actions/checkout@v4
       - name: Cypress run
         id: cypress-test
         uses: cypress-io/github-action@v6
