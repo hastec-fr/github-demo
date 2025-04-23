@@ -1,7 +1,8 @@
 <template>
   <h1>PÉRIODIQUE OU PAS ?</h1>
   <ul>
-    <div class="grid-container">
+    <h2 v-if="errorMsg">{{ errorMsg }}</h2>
+    <div v-else class="grid-container">
       <div class="grid-item" v-for="pe in periodicElements" :key="pe.id">
         <span class="pe-atomic-weight">{{ pe.atomic_weight }}</span>
         <span class="pe-atomic-id">{{ pe.atomic_id }}</span>
@@ -17,13 +18,15 @@ import type PeriodicElement from "../model/PeriodicElement";
 import { ref, onMounted } from "vue";
 
 const periodicElements = ref<PeriodicElement[]>([]);
+const errorMsg = ref<string>('');
 
 const fetchPeriodicElements = async () => {
   try {
     const response = await fetch("/api/periodic_elements" ,{
-      headers: { "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2F5X215X25hbWUifQ.5UmHHaAhJIX24KxUNV2EwdG2GJcOwI6OY7sanznHnOs"}
+      headers: { "Authorization": `Bearer ${import.meta.env.VITE_BACKEND_TOKEN}`}
     });
     if (!response.ok) {
+      errorMsg.value = 'Pas de connexion à la base';
       throw new Error("Erreur réseau ou serveur.");
     }
     const data = await response.json();
@@ -39,7 +42,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-h1 {
+h1, h2 {
   text-align: center;
 }
 .grid-container {
