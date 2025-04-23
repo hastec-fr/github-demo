@@ -124,7 +124,7 @@ jobs:
       - name: Publish container
         run: |
           docker build -t github-demo .
-          docker push ghcr.io/${{github.repository}}/github-demo:latest
+          docker push ghcr.io/${{github.repository}}:latest
 
   deploy:
     needs: [build, lint]
