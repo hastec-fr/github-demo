@@ -33,6 +33,18 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:17.4-alpine3.21
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: gh_db
+        volumes:
+          - ${{ github.workspace }}/indus/data/:/docker-entrypoint-initdb.d
+          
     steps:
       - name: Get code
         uses: actions/checkout@v4
@@ -49,17 +61,7 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-    services:
-        db:
-          image: postgres:17.4-alpine3.21
-          ports:
-            - 5432:5432
-          env:
-            POSTGRES_USER: ${{ secrets.DB_USERNAME }}
-            POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            POSTGRES_DB: gh_db
-          volumes:
-            - ${{ github.workspace }}/indus/data/:/docker-entrypoint-initdb.d
+
 
     #     backend:
     #       image: postgrest/postgrest:v12.2.11
