@@ -7,7 +7,7 @@ describe('Application', () => {
     cy.get('.task-list tr').should('have.length', 2);
   });
 
-  it.skip('should display the table of periodic elements', () => {
+  it('should display the table of periodic elements', () => {
     cy.visit('http://localhost:5173/Periodic');
     cy.contains('Titanium').should('exist');
   });
