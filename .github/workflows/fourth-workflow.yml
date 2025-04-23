@@ -114,12 +114,25 @@ jobs:
         with:
           name: my-app
           path: dist
+  
+  publish-container:
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4     
+      - name: Publish container
+        run: |
+          docker build -t github-demo .
+          docker push ghcr.io/${{github.repository}}/github-demo:latest
 
   deploy:
     needs: [build, lint]
     uses: ./.github/workflows/deploy.yml
     with:
       artifact-name: my-app
+
+
     # secrets:
     #   my-secret: ${{ secrets.GITHUB_TOKEN }}
 
