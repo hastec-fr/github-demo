@@ -5,7 +5,7 @@ on:
       - master
       - 'releases/**'
     tags:
-      - v*
+      - v* 
   workflow_dispatch:
     inputs:
       display-bom:
