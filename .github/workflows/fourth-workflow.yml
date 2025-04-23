@@ -12,6 +12,9 @@ on:
         type: 'boolean'
         default: false
 
+env:
+    IMAGE_NAME: github-demo
+
 jobs:
   # lint:
   #   runs-on: ubuntu-latest
