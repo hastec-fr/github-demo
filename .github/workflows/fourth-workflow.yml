@@ -33,6 +33,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    environment:  dev
     steps:
       - name: Get code
         uses: actions/checkout@v4
@@ -43,7 +44,7 @@ jobs:
           -U ${{ secrets.DB_USERNAME }}
           -d gh_db 
           -f ${{ github.workspace }}/indus/data/init_db.sql
-          
+
       - name: Start Postgres REST
         run: >
           docker run -d --rm --net=host 
@@ -58,9 +59,10 @@ jobs:
           start: npm run dev
           wait-on: 'http://localhost:5173'
         env:          
-          VITE_BACKEND_TOKEN: ${{ secrets.VITE_BACKEND_TOKEN }}                    
+          VITE_BACKEND_TOKEN: ${{ secrets.VITE_BACKEND_TOKEN }}
+          
       - name: Get evidence
-        uses: actions/upload-artifact@v4        
+        uses: actions/upload-artifact@v4
         if: steps.cypress-test.outcome == 'failure'
         with:
           name: cypress-screenshots
