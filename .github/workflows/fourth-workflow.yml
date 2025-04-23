@@ -11,6 +11,9 @@ on:
         required: false
         type: 'boolean'
         default: false
+env:
+  IMAGE_NAME: github-demo
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -120,11 +123,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v4     
+        uses: actions/checkout@v4
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Publish container
         run: |
-          docker build -t github-demo .
-          docker push ghcr.io/${{github.repository}}:latest
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME          
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "main" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
 
   deploy:
     needs: [build, lint]
