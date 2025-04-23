@@ -14,8 +14,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container:
-      image: node:23
+    # container:
+    #   image: node:23
     steps:
       - name: Get code
         uses: actions/checkout@v4
@@ -38,9 +38,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Seed the database
-        run: PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost -U ${{ secrets.DB_USERNAME }} -d gh_db -f ${{ github.workspace }}/indus/data/init_db.sql
+        run: >
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost
+          -U ${{ secrets.DB_USERNAME }}
+          -d gh_db 
+          -f ${{ github.workspace }}/indus/data/init_db.sql
+          
       - name: Start Postgres REST
-        run: docker run -d --rm --net=host -e PGRST_JWT_SECRET="${{ secrets.PGRST_JWT_SECRET }}" -e PGRST_DB_URI="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@localhost/gh_db" postgrest/postgrest
+        run: >
+          docker run -d --rm --net=host 
+          -e PGRST_JWT_SECRET="${{ secrets.PGRST_JWT_SECRET }}"
+          -e PGRST_DB_URI="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@localhost/gh_db"
+          postgrest/postgrest
 
       - name: Cypress run
         id: cypress-test
