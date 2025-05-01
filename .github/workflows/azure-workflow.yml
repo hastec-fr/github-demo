@@ -1,0 +1,173 @@
+name: Fourth Workflow
+on:
+  push:
+    branches:
+      - master
+      - 'releases/**'
+    tags:
+      - v* 
+  workflow_dispatch:
+    inputs:
+      display-bom:
+        required: false
+        type: 'boolean'
+        default: false
+
+env:
+    IMAGE_NAME: github-demo
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    # container:
+    #   image: node:23
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
+      - name: Get dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build the app
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    environment:  dev
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Seed the database
+        run: >
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} psql -h localhost
+          -U ${{ secrets.DB_USERNAME }}
+          -d gh_db 
+          -f ${{ github.workspace }}/indus/data/init_db.sql
+
+      - name: Start Postgres REST
+        run: >
+          docker run -d --rm --net=host 
+          -e PGRST_JWT_SECRET="${{ secrets.PGRST_JWT_SECRET }}"
+          -e PGRST_DB_URI="postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@localhost/gh_db"
+          postgrest/postgrest
+
+      - name: Cypress run
+        id: cypress-test
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm run dev
+          wait-on: 'http://localhost:5173'
+        env:          
+          VITE_BACKEND_TOKEN: ${{ secrets.VITE_BACKEND_TOKEN }}
+          
+      - name: Get evidence
+        uses: actions/upload-artifact@v4
+        if: steps.cypress-test.outcome == 'failure'
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+
+    services:
+      db:
+        image: postgres:17.4-alpine3.21
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }} 
+          POSTGRES_DB: gh_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      bom: ${{ steps.publish-bom.outputs.bom_list }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: npm-dep-${{ hashFiles('**/package-lock.json') }}
+      - name: Get dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Build the app
+        run: npm run build
+      - name: Detail content
+        id: publish-bom
+        run: |
+          echo 'bom_list<<EOF' >> $GITHUB_OUTPUT
+          find dist -name '*.js' -exec echo '{}' \; >> $GITHUB_OUTPUT
+          echo EOF >> $GITHUB_OUTPUT
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app
+          path: dist
+  
+  publish-container:
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Publish container
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME          
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          [ "$VERSION" == "master" ] && VERSION=latest
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+
+  deploy:
+    needs: [build, lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: my-app
+      - name: Push to Azure
+        env:
+          APP_LOCATION: "/"
+          OUTPUT_LOCATION: "/"
+        uses: Azure/static-web-apps-deploy
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: ${{ env.APP_LOCATION }}
+          output_location: ${{ env.OUTPUT_LOCATION }}
+          # api_location: ${{ env.API_LOCATION }}
+
+  post-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print deploy output
+        run: echo "${{ needs.deploy.outputs.result }}"
