@@ -1,4 +1,4 @@
-name: Fourth Workflow
+name: Azure Workflow
 on:
   push:
     branches:
