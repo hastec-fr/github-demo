@@ -147,6 +147,7 @@ jobs:
   deploy:
     needs: [build, lint]
     runs-on: ubuntu-latest
+    environment:  dev
     steps:
       - name: Get build artifacts
         uses: actions/download-artifact@v4
@@ -164,10 +165,3 @@ jobs:
           app_location: ${{ env.APP_LOCATION }}
           output_location: ${{ env.OUTPUT_LOCATION }}
           # api_location: ${{ env.API_LOCATION }}
-
-  post-deploy:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print deploy output
-        run: echo "${{ needs.deploy.outputs.result }}"
