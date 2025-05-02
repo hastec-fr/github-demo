@@ -1,0 +1,5 @@
+name: 'Dummy Docker action'
+description: 'Execute a dummy action with docker'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
