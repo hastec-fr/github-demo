@@ -5,11 +5,10 @@ inputs:
     description: 'Input argument'
     required: false
     default: 'not provided'
-
 outputs:
   my-output-arg:
     description: "Dummy Output"
-    value: ${{ outputs.pseudo-output.my-output-arg }}
+    value: ${{ steps.pseudo-output.my-output-arg }}
 
 runs:
   using: composite
