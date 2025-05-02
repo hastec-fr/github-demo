@@ -4,10 +4,10 @@ inputs:
   my-input-arg:
     description: 'Input argument'
     required: false
-    default: 'Not provided'
+    default: 'not provided'
 runs:
   using: composite
   steps:
     - name: "Display an input argument"
-      run:  echo "Input arg ${{ inputs.my-input-arg }}"
+      run:  echo "Input arg: ${{ inputs.my-input-arg }}"
       shell: bash
