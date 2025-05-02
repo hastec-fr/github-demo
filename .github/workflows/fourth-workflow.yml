@@ -94,25 +94,8 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-  review:
-    needs: [ test, lint ]
-    runs-on: ubuntu-latest
-    permissions: 
-      issues: write
-    steps:
-      - uses: trstringer/manual-approval@v1.9.1
-        with:
-          secret: ${{ github.TOKEN }}
-          approvers: ${{ github.repository_owner }}
-          minimum-approvals: 1
-          issue-title: "Continue Workflow"
-          issue-body: "Please approve or deny the deployment of this version."
-          exclude-workflow-initiator-as-approver: false
-          fail-on-denial: true
-          additional-approved-words: ''
-          additional-denied-words: ''
   build:
-    needs: review
+    needs: test
     runs-on: ubuntu-latest
     outputs:
       bom: ${{ steps.publish-bom.outputs.bom_list }}
