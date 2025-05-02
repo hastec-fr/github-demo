@@ -1,5 +1,13 @@
 name: 'Dummy Docker action'
 description: 'Execute a dummy action with docker'
+inputs:
+  who-to-greet:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
 runs:
   using: 'docker'
   image: 'Dockerfile'

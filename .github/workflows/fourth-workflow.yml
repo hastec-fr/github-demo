@@ -32,8 +32,10 @@ jobs:
       - name: Docker Action
         id: dummy-docker
         uses: ./.github/actions/dummy-docker
-      # - name: It's show time
-      #   run: echo "${{ steps.dummy-js.outputs.time }}"
+        with:
+          who-to-greet: 'Mr Anderson'
+      - name: It's Docker show time
+        run: echo "${{ steps.dummy-docker.outputs.time }}"
       - name: Get and Cache dependencies
         uses: ./.github/actions/cache-deps
       - name: Build the app
