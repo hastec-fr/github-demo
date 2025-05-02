@@ -5,12 +5,24 @@ inputs:
     description: 'Input argument'
     required: false
     default: 'not provided'
+
+outputs:
+  my-output-arg:
+    description: "Dummy Output"
+    value: ${{ outputs.pseudo-output.my-output-arg }}
+    
 runs:
   using: composite
   steps:
     - name: "Display an input argument"
       run:  echo "Input arg - ${{ inputs.my-input-arg }}"
       shell: bash
+   
+    - name: "Pseudo output"
+      id: pseudo-output
+      run: echo "my-output-arg=This is my outpout" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: "Abort a workflow"
       run: exit 1
       shell: bash
