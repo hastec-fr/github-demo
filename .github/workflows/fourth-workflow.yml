@@ -112,7 +112,7 @@ jobs:
           additional-approved-words: ''
           additional-denied-words: ''
   build:
-    needs: test
+    needs: review
     runs-on: ubuntu-latest
     outputs:
       bom: ${{ steps.publish-bom.outputs.bom_list }}
