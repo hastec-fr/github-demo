@@ -33,7 +33,7 @@ jobs:
         id: dummy-js
         uses: ./.github/actions/dummy-js
       - name: It's show time
-        run: echo ${{ steps.dummy-js.outputs.time }}
+        run: echo "${{ steps.dummy-js.outputs.time }}"
       - name: Get and Cache dependencies
         uses: ./.github/actions/cache-deps
       - name: Build the app
