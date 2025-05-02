@@ -94,11 +94,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-  build:
-    needs: test
+  review:
+    needs: [ test, lint ]
     runs-on: ubuntu-latest
-    outputs:
-      bom: ${{ steps.publish-bom.outputs.bom_list }}
+    permissions: 
+      issues: write
     steps:
       - uses: trstringer/manual-approval@v1.9.1
         with:
@@ -111,6 +111,12 @@ jobs:
           fail-on-denial: true
           additional-approved-words: ''
           additional-denied-words: ''
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      bom: ${{ steps.publish-bom.outputs.bom_list }}
+    steps:
       - name: Get code
         uses: actions/checkout@v4
       - name: Get and Cache dependencies
