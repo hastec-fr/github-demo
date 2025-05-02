@@ -10,8 +10,10 @@ jobs:
       issues: write
     steps:
       - name: Apply Bug Label
+        env:
+          TITLE: ${{ github.event.issue.title }}
         run: |
-          title="${{ github.event.issue.title }}"
+          title="$TITLE"
           if [[ "$title" == *"bug"* ]]; then
             curl --request POST \
             --url https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/labels \
