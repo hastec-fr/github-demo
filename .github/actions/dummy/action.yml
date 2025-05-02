@@ -9,5 +9,8 @@ runs:
   using: composite
   steps:
     - name: "Display an input argument"
-      run:  echo "Input arg: ${{ inputs.my-input-arg }}"
+      run:  echo "Input arg - ${{ inputs.my-input-arg }}"
+      shell: bash
+    - name: "Abort a workflow"
+      run: exit 1
       shell: bash
