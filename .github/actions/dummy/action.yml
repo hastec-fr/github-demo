@@ -10,7 +10,7 @@ outputs:
   my-output-arg:
     description: "Dummy Output"
     value: ${{ outputs.pseudo-output.my-output-arg }}
-    
+
 runs:
   using: composite
   steps:
@@ -21,8 +21,4 @@ runs:
     - name: "Pseudo output"
       id: pseudo-output
       run: echo "my-output-arg=This is my outpout" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - name: "Abort a workflow"
-      run: exit 1
       shell: bash
