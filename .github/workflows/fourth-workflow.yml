@@ -29,11 +29,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Javascript Action
-        id: dummy-js
-        uses: ./.github/actions/dummy-js
-      - name: It's show time
-        run: echo "${{ steps.dummy-js.outputs.time }}"
+      - name: Docker Action
+        id: dummy-docker
+        uses: ./.github/actions/dummy-docker
+      # - name: It's show time
+      #   run: echo "${{ steps.dummy-js.outputs.time }}"
       - name: Get and Cache dependencies
         uses: ./.github/actions/cache-deps
       - name: Build the app
