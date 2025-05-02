@@ -100,7 +100,7 @@ jobs:
     outputs:
       bom: ${{ steps.publish-bom.outputs.bom_list }}
     steps:
-      - uses: trstringer/manual-approval@v1
+      - uses: trstringer/manual-approval@v1.9.1
         with:
           secret: ${{ github.TOKEN }}
           approvers: ${{ github.repository_owner }}
