@@ -1,0 +1,5 @@
+name: 'Dummy JS action'
+description: 'Execute a dummy action in javascript'
+runs:
+  using: 'node20'
+  main: 'main-build.js'

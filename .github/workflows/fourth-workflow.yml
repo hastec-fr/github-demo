@@ -29,13 +29,9 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Test I/O composite action
-        id: dummy
-        uses: ./.github/actions/dummy
-        with:
-          my-input-arg: 'This is my arg'
-      - name: Show Output
-        run: echo "Previous Output - ${{ steps.dummy.outputs.my-output-arg }}"
+      - name: Javascript Action
+        id: dummy-js
+        uses: ./.github/actions/dummy-js
       - name: Get and Cache dependencies
         uses: ./.github/actions/cache-deps
       - name: Build the app
