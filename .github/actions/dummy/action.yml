@@ -8,7 +8,7 @@ inputs:
 outputs:
   my-output-arg:
     description: "Dummy Output"
-    value: ${{ steps.pseudo-output.my-output-arg }}
+    value: ${{ steps.pseudo-output.outputs.my-output-arg }}
 
 runs:
   using: composite
