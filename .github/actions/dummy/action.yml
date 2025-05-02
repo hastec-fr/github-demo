@@ -1,0 +1,13 @@
+name: 'Dummy Action'
+description: 'Test inputs / Ouputs'
+inputs:
+  my-input-arg:
+    description: 'Input argument'
+    required: false
+    default: 'Not provided'
+runs:
+  using: composite
+  steps:
+    - name: "Display an input argument"
+      run:  echo "Input arg ${{ inputs.my-input-arg }}"
+      shell: bash

@@ -29,8 +29,10 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
+      - name: Test I/O composite action
+        uses: ./.github/actions/dummy
       - name: Get and Cache dependencies
-        uses: ./.github/actions/cache-deps        
+        uses: ./.github/actions/cache-deps
       - name: Build the app
         run: npm run lint
 
